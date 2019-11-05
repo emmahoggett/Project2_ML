@@ -3,6 +3,7 @@ import scipy
 import scipy.io
 import scipy.sparse as sp
 
+#For reproductibility, remove seed from split_data
 
 def split_data(ratings,min_num_ratings,p_test=0.1):
     """The function return the users that give more then 10 advices
@@ -14,7 +15,7 @@ def split_data(ratings,min_num_ratings,p_test=0.1):
     num_items_per_user = np.array((ratings != 0).sum(axis=0)).flatten()
     num_users_per_item = np.array((ratings != 0).sum(axis=1).T).flatten()
     
-    # set seed
+    # set seed 
     np.random.seed(988)
     
     # select user and item based on the condition.
