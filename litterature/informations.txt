@@ -1,0 +1,7 @@
+Machine learning - recommender system : 
+https://medium.com/recombee-blog/machine-learning-for-recommender-systems-part-1-algorithms-evaluation-and-cold-start-6f696683d0ed
+
+MyMediaLite documentation :
+http://www.mymedialite.net/documentation/command_line.html
+
+
