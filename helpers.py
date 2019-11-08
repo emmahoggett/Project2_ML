@@ -19,6 +19,12 @@ def load_data(path_dataset):
     data = read_txt(path_dataset)[1:]
     return preprocess_data(data)
 
+def load_csv(path_dataset, submission):
+    """Load results in csv format"""
+    pos = ["r"+str(submission.user_id[i])+"_c"+str(submission.movie_id[i]) for i in range (submission.shape[0])]
+    result = pd.DataFrame({'Id': pos,'Prediction':submission.rating})
+    return result.to_csv(path_dataset, index=False)
+
 
 def preprocess_data(data):
     """preprocessing the text data, conversion to numerical array format."""
@@ -75,16 +81,20 @@ def calculate_mse(real_label, prediction):
     t = real_label - prediction
     return 1.0 * t.dot(t.T)
 
-def convert(ratings):
-    """convert ratings matrix into a data frame"""
+def convert_train(ratings):
+    """convert sparse rating matrix into a data frame"""
     #convert ratings into an array
-    matrix = ratings.toarray()
-    matrix2 = matrix.flatten()[matrix.flatten().nonzero()]
+    matrix_0 = ratings.toarray()
+    matrix_1 = matrix_0.flatten()[matrix_0.flatten().nonzero()]
     
     #concatenate user_id, movie_id and ratings
-    matrix3 = np.vstack((matrix.nonzero()[0],matrix.nonzero()[1],matrix2))
-    matrix4 = matrix3.T.astype(int)
-
-    ratings = pd.DataFrame({'user_id': matrix4[:,0], 'movie_id': matrix4[:,1],'rating':matrix4[:,2]})
+    matrix_2 = np.vstack((matrix_0.nonzero()[0],matrix_0.nonzero()[1],matrix_1))
+    matrix_3 = matrix_2.T.astype(int)
     
-    return ratings
+    # convert rating into a data frame
+    ratings = pd.DataFrame({'user_id': matrix_3[:,0], 'movie_id': matrix_3[:,1],'rating':matrix_3[:,2]})
+    n_users = len(ratings.user_id.unique())
+    n_movies = len(ratings.movie_id.unique())
+    
+    return ratings, n_users, n_movies
+
