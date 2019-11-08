@@ -5,6 +5,7 @@ from itertools import groupby
 
 import numpy as np
 import scipy.sparse as sp
+import pandas as pd
 
 
 def read_txt(path):
@@ -35,7 +36,7 @@ def preprocess_data(data):
 
     # parse each line
     data = [deal_line(line) for line in data]
-
+    
     # do statistics on the dataset.
     min_row, max_row, min_col, max_col = statistics(data)
     print("number of items: {}, number of users: {}".format(max_row, max_col))
@@ -73,3 +74,17 @@ def calculate_mse(real_label, prediction):
     """calculate MSE."""
     t = real_label - prediction
     return 1.0 * t.dot(t.T)
+
+def convert(ratings):
+    """convert ratings matrix into a data frame"""
+    #convert ratings into an array
+    matrix = ratings.toarray()
+    matrix2 = matrix.flatten()[matrix.flatten().nonzero()]
+    
+    #concatenate user_id, movie_id and ratings
+    matrix3 = np.vstack((matrix.nonzero()[0],matrix.nonzero()[1],matrix2))
+    matrix4 = matrix3.T.astype(int)
+
+    ratings = pd.DataFrame({'user_id': matrix4[:,0], 'movie_id': matrix4[:,1],'rating':matrix4[:,2]})
+    
+    return ratings
