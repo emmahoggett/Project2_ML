@@ -23,6 +23,7 @@ def load_csv(path_dataset, submission):
     """Load results in csv format"""
     pos = ["r"+str(submission.user_id[i])+"_c"+str(submission.movie_id[i]) for i in range (submission.shape[0])]
     result = pd.DataFrame({'Id': pos,'Prediction':submission.rating})
+    result = result.astype({'Id': str,'Prediction':int})
     return result.to_csv(path_dataset, index=False)
 
 
