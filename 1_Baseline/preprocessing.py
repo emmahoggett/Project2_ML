@@ -3,25 +3,34 @@ import scipy
 import scipy.io
 import scipy.sparse as sp
 
-#For reproductibility, remove seed from split_data
+# Function that only keeps items and users with more than min_num_ratings
 
-def split_data(ratings,min_num_ratings,p_test=0.1):
+def condition_min_num_ratings(ratings, min_num_ratings):
+    # determine the number of items per user and the # of users per item
+    num_items_per_user = np.array((ratings != 0).sum(axis=0)).flatten()
+    num_users_per_item = np.array((ratings != 0).sum(axis=1).T).flatten()
+    
+    # select user and item based on the condition.
+    valid_users = np.where(num_items_per_user >= min_num_ratings)[0]
+    valid_items = np.where(num_users_per_item >= min_num_ratings)[0]
+    valid_ratings = ratings[valid_items,:][:,valid_users]
+    
+    return valid_users, valid_items, valid_ratings
+    
+# For reproductibility, remove seed from split_data
+
+def split_data(ratings, min_num_ratings, p_test=0.1):
     """The function return the users that give more then 10 advices
     ratings: first column represent the user and the film
           second column represent the grading
     min_num_ratings: minimum number of ratings given by a user
     p_test: proportion of the data that will be use for test"""
-    # determine the number of items per user and the # of users per item
-    num_items_per_user = np.array((ratings != 0).sum(axis=0)).flatten()
-    num_users_per_item = np.array((ratings != 0).sum(axis=1).T).flatten()
     
     # set seed 
     np.random.seed(988)
     
-    # select user and item based on the condition.
-    valid_users = np.where(num_items_per_user >= min_num_ratings)[0]
-    valid_items = np.where(num_users_per_item >= min_num_ratings)[0]
-    valid_ratings = ratings[valid_items, :][: , valid_users] 
+    # select user and item based on the condition "min_num_ratings"
+    _, _, valid_ratings = condition_min_num_ratings(ratings, min_num_ratings)
     
     # init
     num_rows, num_cols = valid_ratings.shape
@@ -29,7 +38,6 @@ def split_data(ratings,min_num_ratings,p_test=0.1):
     test = sp.lil_matrix((num_rows, num_cols))
     
     nz_items, nz_users = valid_ratings.nonzero()
-    
     
     # split the data
     for user in set(nz_users):

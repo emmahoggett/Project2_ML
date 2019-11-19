@@ -5,13 +5,12 @@ import numpy as np
 import scipy.sparse as sp
 
 
-def matrix_factorization_SGD(train, test, num_features = 20, lambda_user=0.1, lambda_item=0.7):
+def matrix_factorization_SGD(train, num_features = 20, lambda_user=0.1, lambda_item=0.7):
     """matrix factorization by SGD."""
     
     # define parameters
     gamma = 0.01
     num_epochs = 20     # number of full passes through the train set
-    errors = [0]
     
     # set seed
     np.random.seed(988)
@@ -21,9 +20,7 @@ def matrix_factorization_SGD(train, test, num_features = 20, lambda_user=0.1, la
     
     # find the non-zero ratings indices 
     nz_row, nz_col = train.nonzero()
-    nz_train = list(zip(nz_row, nz_col))
-    nz_row, nz_col = test.nonzero()
-    nz_test = list(zip(nz_row, nz_col))
+    nz_train = list(zip(nz_row, nz_col)) # list of the indices of the non zero terms in train
 
     for it in range(num_epochs):        
         # shuffle the training rating indices
@@ -42,15 +39,8 @@ def matrix_factorization_SGD(train, test, num_features = 20, lambda_user=0.1, la
             item_features[:, d] += gamma * (err * user_info - lambda_item * item_info)
             user_features[:, n] += gamma * (err * item_info - lambda_user * user_info)
 
-        rmse = compute_error(train, user_features, item_features, nz_train)
-        print("iter: {}, RMSE on training set: {}.".format(it, rmse))
-        
-        errors.append(rmse)
-
-    # evaluate the test error
-    rmse = compute_error(test, user_features, item_features, nz_test)
-    print("RMSE on test data: {}.".format(rmse))
-
+    return user_features, item_features
+    
     
 def init_MF(train, num_features):
     """init the parameter for matrix factorization."""
