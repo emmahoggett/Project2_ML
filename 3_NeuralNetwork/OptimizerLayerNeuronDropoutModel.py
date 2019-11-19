@@ -45,7 +45,7 @@ def optimizerActivationModel(model, layer, neuron, dropout):
     return array_model[np.argmin(activation_mse)]
 
 def optimizerDropout(model, layer, neuron):
-    dropout = np.linspace(0.05,0.95,19)
+    dropout = np.linspace(0.05,0.5,10)
     dropout_mse = []
     for nb_dropout in dropout:
         #add dropout to the model and take the optimize number
