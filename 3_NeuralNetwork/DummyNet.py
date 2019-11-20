@@ -1,9 +1,11 @@
-from keras.models import Model,load_model
+from keras.models import Model,load_model, Sequential
 from keras.layers import Input, Reshape, Dot
 from keras.layers.embeddings import Embedding
 from keras.optimizers import Adam
 from keras.regularizers import l2
-from keras.layers import Concatenate, Dense, Dropout, Add, Activation, Lambda
+from keras.layers import Concatenate, Dense, Dropout,Add, Activation, Lambda
+from keras.callbacks import EarlyStopping
+usualCallback = EarlyStopping()
 
 class EmbeddingLayer:
     def __init__(self, n_items, n_factors):
@@ -16,7 +18,7 @@ class EmbeddingLayer:
         x = Reshape((self.n_factors,))(x)
         return x
 
-def recommenderNet(n_users, n_movies, n_factors, min_rating, max_rating):
+def recommenderNet(n_users, n_movies, n_factors):
     
     user = Input(shape=(1,))
     u = EmbeddingLayer(n_users, n_factors)(user)
@@ -31,10 +33,10 @@ def recommenderNet(n_users, n_movies, n_factors, min_rating, max_rating):
     x = Activation('relu')(x)
     x = Dropout(0.5)(x)
     
-    x = Dense(1, kernel_initializer='he_normal')(x)
-    x = Activation('sigmoid')(x)
-    x = Lambda(lambda x: x * (max_rating - min_rating) + min_rating)(x)
+    x = Dense(5, kernel_initializer='he_normal')(x)
+    x = Activation('softmax')(x)
     model = Model(inputs=[user, movie], outputs=x)
     opt = Adam(lr=0.001)
     model.compile(loss='mean_squared_error', optimizer=opt)
     return model
+    
