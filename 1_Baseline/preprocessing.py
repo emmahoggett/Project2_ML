@@ -3,6 +3,7 @@ import scipy
 import scipy.io
 import scipy.sparse as sp
 
+
 # Function that only keeps items and users with more than min_num_ratings
 
 def condition_min_num_ratings(ratings, min_num_ratings):
@@ -16,17 +17,12 @@ def condition_min_num_ratings(ratings, min_num_ratings):
     valid_ratings = ratings[valid_items,:][:,valid_users]
     
     return valid_users, valid_items, valid_ratings
-    
-# For reproductibility, remove seed from split_data
+
+
+#########################################################
+# Function that only keeps users and movies with more than 10 ratings
 
 def split_data(ratings, min_num_ratings, p_test=0.1):
-    """The function return the users that give more then 10 advices
-    ratings: first column represent the user and the film
-          second column represent the grading
-    min_num_ratings: minimum number of ratings given by a user
-    p_test: proportion of the data that will be use for test"""
-    
-    # set seed 
     np.random.seed(988)
     
     # select user and item based on the condition "min_num_ratings"
@@ -56,4 +52,5 @@ def split_data(ratings, min_num_ratings, p_test=0.1):
     print("Total number of nonzero elements in origial data:{v}".format(v=ratings.nnz))
     print("Total number of nonzero elements in train data:{v}".format(v=train.nnz))
     print("Total number of nonzero elements in test data:{v}".format(v=test.nnz))
+    
     return valid_ratings, train, test
