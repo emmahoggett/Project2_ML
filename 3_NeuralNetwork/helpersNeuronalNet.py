@@ -49,16 +49,56 @@ class EmbeddingLayer:
         x = Reshape((self.n_factors,))(x)
         return x
 
-
-def setDataSet(data):
+def splitClean(data):
     """Set global data set and split the data"""
-    n_movies = data ['movie'].nunique()
-    n_users = data ['user'].nunique()
     
-    X = data[['user', 'movie']].values
-    y = data ['rating']
+    n_movies = data ['movie_id'].nunique()
+    n_users = data ['user_id'].nunique()
     
-    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.1, random_state=42)
+    data_copy = data.copy()
+    data_train = data_copy.sample(frac=0.9, random_state=0)
+    data_test = data_copy.drop(data_train.index)
+    
+    f = ['count','mean']
+
+    df_movie_summary = data_train.groupby('movie_id')['rating'].agg(f)
+    df_movie_summary.index = df_movie_summary.index.map(int)
+    movie_benchmark = round(df_movie_summary['count'].quantile(0.90),0)
+    drop_movie_list = df_movie_summary[df_movie_summary['count'] < movie_benchmark].index
+
+
+    df_cust_summary = data_train.groupby('user_id')['rating'].agg(f)
+    df_cust_summary.index = df_cust_summary.index.map(int)
+    cust_benchmark = round(df_cust_summary['count'].quantile(0.90),0)
+    drop_cust_list = df_cust_summary[df_cust_summary['count'] < cust_benchmark].index
+    
+    data_train = data_train[~data_train['movie_id'].isin(drop_movie_list)]
+    data_train = data_train[~data_train['user_id'].isin(drop_cust_list)]
+    
+    return data_train, data_test,n_movies, n_users
+
+    
+def setDataSet(data):
+    """Set global data set and split the data for training the model"""
+    
+    data_train, data_test,n_movies, n_users = splitClean(data)
+    user_enc = LabelEncoder()
+    data_train ['user'] = user_enc.fit_transform(data_train['user_id'].values)
+    data_test ['user'] = user_enc.fit_transform(data_test['user_id'].values)
+
+    item_enc = LabelEncoder()
+    data_train ['movie'] = item_enc.fit_transform(data_train['movie_id'].values)
+    data_test ['movie'] = item_enc.fit_transform(data_test['movie_id'].values)
+
+    data_train ['rating'] = data_train ['rating'].values.astype(np.int)
+    data_test ['rating'] = data_test ['rating'].values.astype(np.int)
+    
+    X_train = data_train[['user', 'movie']].values
+    y_train = data_train ['rating']
+    
+    X_test = data_test[['user', 'movie']].values
+    y_test = data_test ['rating']
+    
     X_train_array = [X_train[:,0], X_train[:,1]]
     X_test_array = [X_test[:,0], X_test[:,1]]
     
