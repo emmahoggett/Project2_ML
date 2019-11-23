@@ -2,10 +2,11 @@ from keras.layers import Input, Dense, Dropout, Embedding, Concatenate, Reshape
 from keras.models import Model
 from keras.optimizers import Adam
 from keras.regularizers import l2
+from keras_radam import RAdam
 
 from helpersNeuronalNet import*
 
-def generate(n_layers, n_neurons, dropout, n_users, n_movies, n_factors):
+def generate(n_layers, n_neurons, dropout, n_users, n_movies, n_factors, opt = RAdam()):
     
     # Input layer
     user = Input(shape=(1,))
@@ -28,7 +29,6 @@ def generate(n_layers, n_neurons, dropout, n_users, n_movies, n_factors):
     x = Dense(5, activation='softmax', kernel_initializer='he_normal')(x)
     
     model = Model(inputs=[user, movie], outputs=x)
-    opt = Adam(lr=0.001)
-    model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+    model.compile(opt, loss='categorical_crossentropy', metrics=['accuracy', 'categorical_accuracy'])
     
     return model

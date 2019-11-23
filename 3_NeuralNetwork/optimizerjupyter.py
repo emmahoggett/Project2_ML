@@ -28,7 +28,7 @@ def layers(max_nb_layers, nb_neurons, nb_dropout, nb_embeddinglayer, data):
         
         history = model.fit(x=X_train_array, y=y_train,  batch_size=1024, 
                              epochs=10000,verbose=1,validation_data=(X_test_array, y_test),callbacks=[usualCallback])
-        accuracy.append(history.history['val_acc'][-2])
+        accuracy.append(history.history['val_accuracy'][-2])
         
         if (max_accuracy < max(accuracy)):
             max_accuracy = max(accuracy)
@@ -56,7 +56,7 @@ def neurons(nb_layers, max_nb_neurons, nb_dropout, nb_embeddinglayer, data):
         
         history = model.fit(x=X_train_array, y=y_train,  batch_size=1024, 
                              epochs=10000,verbose=1,validation_data=(X_test_array, y_test),callbacks=[usualCallback])
-        accuracy.append(history.history['val_acc'][-2])
+        accuracy.append(history.history['val_accuracy'][-2])
         
         if (max_accuracy < max(accuracy)):
             max_accuracy = max(accuracy)
@@ -74,7 +74,7 @@ def embeddinglayer(nb_layers, nb_neurons, nb_dropout, max_nb_embeddinglayer, dat
         model = generate(nb_layers, nb_neurons, nb_dropout, n_users, n_movies, embeddinglayer)
         history = model.fit(x=X_train_array, y=y_train,  batch_size=1024, 
                              epochs=10000,verbose=1,validation_data=(X_test_array, y_test),callbacks=[usualCallback])
-        accuracy.append(history.history['val_acc'][-2])
+        accuracy.append(history.history['val_accuracy'][-2])
         
         if (max_accuracy < max(accuracy)):
             max_accuracy = max(accuracy)
@@ -84,14 +84,15 @@ def embeddinglayer(nb_layers, nb_neurons, nb_dropout, max_nb_embeddinglayer, dat
     return nb_embeddinglayer, max_accuracy 
 
 def optimize_dropout(n_layers, n_neurons, n_factors, data):
+    dropouts=[0.05, 0.15, 0.25, 0.35, 0.45]
     accuracy = []
     max_accuracy = 0
     X_train_array, X_test_array, y_train, y_test, n_movies, n_users = setDataSet(data)
-    for dropout in range(0.05,0.45,0.1):
+    for dropout in dropouts:
         model = generate(n_layers, n_neurons, dropout, n_users, n_movies, n_factors)
         history = model.fit(x=X_train_array, y=y_train,  batch_size=1024, \
                             epochs=10000,verbose=1, validation_data=(X_test_array, y_test), callbacks=[usualCallback])
-        accuracy.append(history.history['val_acc'][-2])
+        accuracy.append(history.history['val_accuracy'][-2])
         
         if (max_accuracy < max(accuracy)):
             max_accuracy = max(accuracy)
