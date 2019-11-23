@@ -39,6 +39,7 @@ def calculate_mse(real_label, prediction):
     return 1.0 * t.dot(t.T)
 
 class EmbeddingLayer:
+    """Set embedding layer class"""
     def __init__(self, n_items, n_factors):
         self.n_items = n_items
         self.n_factors = n_factors
@@ -48,28 +49,35 @@ class EmbeddingLayer:
                       embeddings_regularizer=l2(1e-6))(x)
         x = Reshape((self.n_factors,))(x)
         return x
-
-def splitClean(data):
-    """Set global data set and split the data"""
+    
+    
+def split(data):
+    """Split the data"""
     
     n_movies = data ['movie_id'].nunique()
     n_users = data ['user_id'].nunique()
     
-    data_copy = data.copy()
-    data_train = data_copy.sample(frac=0.9, random_state=0)
-    data_test = data_copy.drop(data_train.index)
+    data_train = data.iloc[:int(data.shape[0]*0.8)]
+    data_test = data.iloc[int(data.shape[0]*0.8):]
+    
+    return data_train, data_test,n_movies, n_users
+
+def splitClean(data):
+    """Set global data set and split the data"""
+    
+    data_train, data_test,n_movies, n_users = split(data)
     
     f = ['count','mean']
 
     df_movie_summary = data_train.groupby('movie_id')['rating'].agg(f)
     df_movie_summary.index = df_movie_summary.index.map(int)
-    movie_benchmark = round(df_movie_summary['count'].quantile(0.90),0)
+    movie_benchmark = round(df_movie_summary['count'].quantile(0.95),0)
     drop_movie_list = df_movie_summary[df_movie_summary['count'] < movie_benchmark].index
 
 
     df_cust_summary = data_train.groupby('user_id')['rating'].agg(f)
     df_cust_summary.index = df_cust_summary.index.map(int)
-    cust_benchmark = round(df_cust_summary['count'].quantile(0.90),0)
+    cust_benchmark = round(df_cust_summary['count'].quantile(0.95),0)
     drop_cust_list = df_cust_summary[df_cust_summary['count'] < cust_benchmark].index
     
     data_train = data_train[~data_train['movie_id'].isin(drop_movie_list)]
@@ -79,7 +87,8 @@ def splitClean(data):
 
     
 def setDataSet(data):
-    """Set global data set and split the data for training the model"""
+    """Split and clean the data set. Ratings are enconded and the data frame is 
+    change into an array with movies and users"""
     
     data_train, data_test,n_movies, n_users = splitClean(data)
     user_enc = LabelEncoder()
