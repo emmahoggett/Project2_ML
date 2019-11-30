@@ -12,7 +12,7 @@ from keras.callbacks import EarlyStopping
 usualCallback = EarlyStopping()
 
 
-from helpersNeuronalNet import*
+from helpersNeuralNet import*
 from model_generation import*
     
     

@@ -4,7 +4,7 @@ from keras.optimizers import Adam
 from keras.regularizers import l2
 from keras_radam import RAdam
 
-from helpersNeuronalNet import*
+from helpersNeuralNet import*
 
 def generate(n_layers, n_neurons, dropout, n_users, n_movies, n_factors, opt = RAdam()):
     
