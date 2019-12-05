@@ -13,6 +13,13 @@ def read_txt(path):
     with open(path, "r") as f:
         return f.read().splitlines()
 
+def deal_line(line):
+    pos, rating = line.split(',')
+    row, col = pos.split("_")
+    row = row.replace("r", "")
+    col = col.replace("c", "")
+    return int(row), int(col), float(rating)
+
 
 def load_data(path_dataset):
     """Load data in text format, one rating per line, as in the kaggle competition."""
@@ -37,4 +44,20 @@ def calculate_mse(real_label, prediction):
     t = real_label - prediction
     return 1.0 * t.dot(t.T)
 
+# def convert_train(ratings):
+#     """convert sparse rating matrix into a data frame"""
+#     #convert ratings into an array
+#     matrix_0 = ratings.toarray()
+#     matrix_1 = matrix_0.flatten()[matrix_0.flatten().nonzero()]
+    
+#     #concatenate user_id, movie_id and ratings
+#     matrix_2 = np.vstack((matrix_0.nonzero()[0],matrix_0.nonzero()[1],matrix_1))
+#     matrix_3 = matrix_2.T.astype(int)
+    
+#     # convert rating into a data frame
+#     ratings = pd.DataFrame({'user_id': matrix_3[:,0], 'movie_id': matrix_3[:,1],'rating':matrix_3[:,2]})
+#     n_users = len(ratings.user_id.unique())
+#     n_movies = len(ratings.movie_id.unique())
+    
+#     return ratings, n_users, n_movies
 
