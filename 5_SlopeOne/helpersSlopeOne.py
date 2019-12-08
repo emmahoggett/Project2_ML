@@ -30,16 +30,4 @@ def calculate_mse(real_label, prediction):
     """calculate MSE."""
     t = real_label - prediction
     return 1.0 * t.dot(t.T)
-    
-    
-def split(data):
-    """Split the data in 90% training and 10% testing
-    data : pandas data frame of the training data set"""
-    
-    n_movies = data ['movie_id'].nunique()
-    n_users = data ['user_id'].nunique()
-    
-    data_train = data.iloc[:int(data.shape[0]*0.9)]
-    data_test = data.iloc[int(data.shape[0]*0.9):]
-    
-    return data_train, data_test,n_movies, n_users
+
