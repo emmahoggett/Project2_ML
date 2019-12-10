@@ -106,7 +106,6 @@ def compute_error(data, user_features, item_features, nz):
         mse += (data[row, col] - user_info.T.dot(item_info)) ** 2
     return np.sqrt(1.0 * mse / len(nz))
 
-
 #################################################
 ##### Functions for creating the submission #####    
 
