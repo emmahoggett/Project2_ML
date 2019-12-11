@@ -18,13 +18,41 @@ def computeSurprise(train, test):
     trainset = data.build_full_trainset()
     
     df = computeKNNBasic(trainset, test, df)
+    df = computeSVD(trainset, test, df)
+    df = computeSVDpp(trainset, test, df)
+    df = computeNMF(trainset, test, df)
     df = computeKNNMeans(trainset, test, df)
     df = computeSlopeOne (trainset, test, df)
     df = computeCoClustering(trainset, test, df)
     
     return df
+
+def computeSVD(trainset, test, df):
+    print("Start computing SVD...")
+    svd = SVD().fit(trainset)
+    df['svd_rating'] = test[['user_id', 'movie_id']] \
+    .apply(lambda row: svd.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
+    return df
+
+def computeSVDpp(trainset, test, df):
+    print("Start computing SVDpp...")
+    svdpp = SVDpp().fit(trainset)
+    df['svdpp_rating'] = test[['user_id', 'movie_id']] \
+    .apply(lambda row: svdpp.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
+    return df
+
+def computeNMF(trainset, test, df):
+    print("Start computing NMF...")
+    nmf = NMF().fit(trainset)
+    df['nmf_rating'] = test[['user_id', 'movie_id']] \
+    .apply(lambda row: nmf.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
+    return df
     
 def computeKNNBasic(trainset, test, df):
+    print("Start computing KNNBasic...")
     simoption = {'user_based': True}
     knnbasic_user = KNNBasic(k = 253, sim_options=simoption).fit(trainset)
 
@@ -36,10 +64,12 @@ def computeKNNBasic(trainset, test, df):
 
     df['knnbasic_item_rating'] = test[['user_id', 'movie_id']] \
     .apply(lambda row: knnbasic_item.predict(row['user_id'], row['movie_id'])[3], axis=1)
-    
+    print ("... finished")
     return df
 
+
 def computeKNNMeans(trainset, test, df):
+    print("Start computing KNNMeans...")
     sim_options = {'name': 'pearson_baseline', 'user_based': True}
     knnmeans_user = KNNWithMeans(k = 500, sim_options = sim_options).fit(trainset)
     
@@ -51,19 +81,25 @@ def computeKNNMeans(trainset, test, df):
     
     df['knnmeans_item_rating'] = test[['user_id', 'movie_id']] \
     .apply(lambda row: knnmeans_item.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
+    
     return df
 
 def computeSlopeOne (trainset, test, df):
+    print("Start computing SlopeOne...")
     slopeone = SlopeOne().fit(trainset)
     
     df['slopeone_rating'] = test[['user_id', 'movie_id']] \
     .apply(lambda row: slopeone.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
     return df
 
 def computeCoClustering(trainset, test, df):
+    print("Start computing CoClustering...")
     cocluster = CoClustering(n_cltr_u=2, n_cltr_i=19, n_epochs = 30).fit(trainset)
 
     df['cocluster_rating'] = test[['user_id', 'movie_id']] \
     .apply(lambda row: cocluster.predict(row['user_id'], row['movie_id'])[3], axis=1)
+    print ("... finished")
     
     return df

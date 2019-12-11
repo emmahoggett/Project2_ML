@@ -9,7 +9,7 @@ import numpy as np
 
 def computeMatrixFact(train, test, df):
     
-    
+    print("Start computing Matrix factorization...")
     n_users = len(train.user_id.unique())
     n_movies = len(train.movie_id.unique())
     #creating movie embedding path
@@ -32,5 +32,6 @@ def computeMatrixFact(train, test, df):
     prediction = model.predict([test.user_id, test.movie_id])
     
     df['matrix_fact_rating'] = prediction
+    print ("... finished")
     
     return df
