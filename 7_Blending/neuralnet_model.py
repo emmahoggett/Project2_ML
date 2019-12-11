@@ -11,10 +11,8 @@ import pandas as pd
 import numpy as np
 
 def computeNeuralNet(train, test, df):
-#   Implemenetation of a shallow neural network 
+    #   Implemenetation of a shallow neural network 
 
-    train_x = 
-    
     categorical_train_y = np.zeros([train.shape[0], 5])
     categorical_train_y[np.arange(train.shape[0]), train.rating - 1] = 1
     categorical_train_y.shape
@@ -48,12 +46,11 @@ def computeNeuralNet(train, test, df):
     model = models.Model([input_i, input_u], output)
     model.compile(optimizer='adamax', loss='categorical_crossentropy')
     
-    model.summary()
     
     matrix_fact = model.fit([train.user_id, train.movie_id], train.rating, epochs=20, verbose=1)
     
     prediction = model.predict([test.user_id, test.movie_id])
     
-    df['matrix_fact_rating'] = prediction
+    df['neural_net_rating'] = prediction
     
     return df
