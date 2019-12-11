@@ -1,4 +1,4 @@
-from surprise import KNNBasic, KNNWithMeans, KNNWithZScore
+from surprise import KNNBasic, KNNWithMeans
 from surprise import SVD, SVDpp, NMF
 from surprise import SlopeOne, CoClustering
 from surprise import Dataset, Reader
@@ -10,6 +10,21 @@ import numpy as np
 
 
 def computeSurprise(train, test):
+    """
+    Compute the following algorithms of the surprise library:
+        - SVD
+        - SVD++
+        - Non-negative Matric factorization
+        - k-Nearest Neighbours basic user based and item based
+        - k-Nearest Neighbours with mean user based and item based
+        - Slope one
+        - Co-Clustering
+    All those model are optimized.
+    
+        train : pandas data frame, that define the training set. The training set is used to fit models.
+        test : pandas data frame, that define the test set. Predictions will be made on the data set.
+    
+    """
     reader = Reader(rating_scale=(1,5))
     df = test[['user_id', 'movie_id']].copy()
     
@@ -28,6 +43,12 @@ def computeSurprise(train, test):
     return df
 
 def computeSVD(trainset, test, df):
+    """ 
+    Compute the SVD algorithm in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the column svd_rating.
+    """
     print("Start computing SVD...")
     svd = SVD().fit(trainset)
     df['svd_rating'] = test[['user_id', 'movie_id']] \
@@ -36,6 +57,13 @@ def computeSVD(trainset, test, df):
     return df
 
 def computeSVDpp(trainset, test, df):
+    """ 
+    Compute the SVD++ algorithm in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the column svdpp_rating.
+    """
+    
     print("Start computing SVDpp...")
     svdpp = SVDpp().fit(trainset)
     df['svdpp_rating'] = test[['user_id', 'movie_id']] \
@@ -44,6 +72,13 @@ def computeSVDpp(trainset, test, df):
     return df
 
 def computeNMF(trainset, test, df):
+    """ 
+    Compute the Non-negative Matrix factorization in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the column nmf_rating.
+    """
+    
     print("Start computing NMF...")
     nmf = NMF().fit(trainset)
     df['nmf_rating'] = test[['user_id', 'movie_id']] \
@@ -52,6 +87,15 @@ def computeNMF(trainset, test, df):
     return df
     
 def computeKNNBasic(trainset, test, df):
+    """ 
+    Compute the item based and the user based Basic k-Nearest Neighbours in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns knnbasic_user_rating and
+        knnbasic_item_rating.
+        
+     """
+    
     print("Start computing KNNBasic...")
     simoption = {'user_based': True}
     knnbasic_user = KNNBasic(k = 253, sim_options=simoption).fit(trainset)
@@ -69,6 +113,14 @@ def computeKNNBasic(trainset, test, df):
 
 
 def computeKNNMeans(trainset, test, df):
+    """ 
+    Compute the item based and the user based k-Nearest Neighbours with mean in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns knnmeans_user_rating and
+        knnmeans_item_rating.
+        
+     """
     print("Start computing KNNMeans...")
     sim_options = {'name': 'pearson_baseline', 'user_based': True}
     knnmeans_user = KNNWithMeans(k = 500, sim_options = sim_options).fit(trainset)
@@ -86,6 +138,13 @@ def computeKNNMeans(trainset, test, df):
     return df
 
 def computeSlopeOne (trainset, test, df):
+    """ 
+    Compute the Slope One algorithm in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns slopeone_rating.
+        
+     """
     print("Start computing SlopeOne...")
     slopeone = SlopeOne().fit(trainset)
     
@@ -95,6 +154,13 @@ def computeSlopeOne (trainset, test, df):
     return df
 
 def computeCoClustering(trainset, test, df):
+    """ 
+    Compute the Co-Clustering algorithm in Surprise library
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns cocluster_rating.
+        
+     """
     print("Start computing CoClustering...")
     cocluster = CoClustering(n_cltr_u=2, n_cltr_i=19, n_epochs = 30).fit(trainset)
 
