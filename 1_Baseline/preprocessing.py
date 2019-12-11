@@ -22,8 +22,8 @@ def condition_min_num_ratings(ratings, min_num_ratings):
 #########################################################
 # Function that only keeps users and movies with more than 10 ratings
 
-def split_data(ratings, min_num_ratings, p_test=0.1):
-    np.random.seed(988)
+def split_data(ratings, min_num_ratings, p_test=0.2):
+    np.random.seed(1)
     
     # select user and item based on the condition "min_num_ratings"
     _, _, valid_ratings = condition_min_num_ratings(ratings, min_num_ratings)

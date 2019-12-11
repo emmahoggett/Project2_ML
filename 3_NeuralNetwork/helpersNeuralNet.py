@@ -4,6 +4,7 @@
 from itertools import groupby
 
 import numpy as np
+import scipy.sparse as sp
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
@@ -28,10 +29,11 @@ def load_data(path_dataset):
 
 def create_csv(path_dataset, submission):
     """Write results in csv format"""
-    pos = ["r"+submission.user_id[i]+"_c"+submission.movie_id[i] for i in range(submission.shape[0])]
+    pos = ["r" + submission.user_id[i] + "_c" + submission.movie_id[i] for i in range(submission.index.stop)]
     result = pd.DataFrame({'Id':pos, 'Prediction':submission.rating})
-    result = result.astype({'Id': str,'Prediction':int})
+    result = result.astype({'Id':str,'Prediction':int})
     return result.to_csv(path_dataset, index=False)
+
 
 def calculate_mse(real_label, prediction):
     """calculate MSE."""

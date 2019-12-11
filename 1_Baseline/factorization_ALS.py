@@ -15,7 +15,7 @@ def matrix_factorization_ALS(train, num_features = 25, lambda_user=0.1, lambda_i
     error_list = [0, 0]
     
     # set seed
-    np.random.seed(988)
+    np.random.seed(1)
 
     # init ALS
     user_features, item_features = init_MF(train, num_features)

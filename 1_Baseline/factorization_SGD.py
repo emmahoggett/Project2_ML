@@ -6,15 +6,15 @@ import scipy.sparse as sp
 
 from helpers import*
 
-def matrix_factorization_SGD(train, num_features = 20, lambda_user=0.1, lambda_item=0.7):
+def matrix_factorization_SGD(train, num_features = 20, lambda_user=0.07, lambda_item=0.07):
     """matrix factorization by SGD."""
     
     # define parameters
-    gamma = 0.01
+    gamma = 0.02
     num_epochs = 20     # number of full passes through the train set
     
     # set seed
-    np.random.seed(988)
+    np.random.seed(1)
 
     # init matrix
     user_features, item_features = init_MF(train, num_features)

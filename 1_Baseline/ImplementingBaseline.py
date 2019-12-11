@@ -5,6 +5,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from helpers import calculate_mse
+from sklearn.metrics import accuracy_score
 
 
 def baseline_global_mean(train, test):
@@ -22,7 +23,8 @@ def baseline_global_mean(train, test):
     # predict the ratings as global mean
     mse = calculate_mse(nonzero_test, global_mean_train)
     rmse = np.sqrt(1.0 * mse / nonzero_test.shape[1])
-    print("test RMSE of baseline using the global mean: {v}.".format(v=rmse))
+    
+    print("test of baseline using the global mean: RMSE = {v}.".format(v=rmse))
 
     
 def baseline_user_mean(train, test):
