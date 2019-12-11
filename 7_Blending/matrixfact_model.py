@@ -8,6 +8,13 @@ import pandas as pd
 import numpy as np
 
 def computeMatrixFact(train, test, df):
+    """
+    Compute Matrix Factorization with keras library
+    
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns matrix_fact_rating.
+    """
     
     print("Start computing Matrix factorization...")
     n_users = len(train.user_id.unique())

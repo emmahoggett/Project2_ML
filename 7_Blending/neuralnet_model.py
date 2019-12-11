@@ -11,7 +11,14 @@ import pandas as pd
 import numpy as np
 
 def computeNeuralNet(train, test, df):
-    #   Implemenetation of a shallow neural network 
+    """
+    Implementation of a shallow neural network.
+    
+        trainset: trainset build to fit the model with the training set.
+        test: data frame of the test data.
+        df : data frame that will be returned with the prediction in the columns neural_net_rating.
+    
+    """
 
     categorical_train_y = np.zeros([train.shape[0], 5])
     categorical_train_y[np.arange(train.shape[0]), train.rating - 1] = 1

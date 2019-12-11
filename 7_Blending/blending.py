@@ -7,6 +7,15 @@ import pandas as pd
 import numpy as np
 
 def computeAll (train, valid, test):
+    """
+    Compute the predictions of Surprise algorithms, the shallow Neural Network and the matrix factorization.
+    
+        train : data frame of the validation data. Training of the different models is made with this data set.
+        valid : data frame of the validation data. The linear regression is made on this data set.
+        test: data frame of the test data. Predictions are made on this model.
+        
+        Return a data frame with the predictions of the test set and print the result of the linear regression.
+    """
     
     df_test = computeSurprise(train, test)
     df_test = computeMatrixFact(train, test, df_test)
