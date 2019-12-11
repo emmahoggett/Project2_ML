@@ -13,7 +13,8 @@ def computeAll (train, valid, test):
     df_valid = computeSurprise(train, valid)
     df_valid = computeMatrixFact(train, valid, df_valid)
     models_names = ['knnbasic_user_rating','knnbasic_item_rating','knnmeans_item_rating',
-                    'knnmeans_user_rating','slopeone_rating','cocluster_rating', 'matrix_fact_rating']
+                    'knnmeans_user_rating','slopeone_rating','cocluster_rating', 'matrix_fact_rating', 'svdpp_rating',
+                   'svd_rating','nmf_rating']
     
     def blending_funct(x):
 
