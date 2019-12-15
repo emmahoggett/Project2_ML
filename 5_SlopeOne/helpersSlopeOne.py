@@ -26,8 +26,9 @@ def create_csv(path_dataset, submission):
     result = result.astype({'Id': str,'Prediction':int})
     return result.to_csv(path_dataset, index=False)
 
-def calculate_mse(real_label, prediction):
+def calculate_rmse(real_label, prediction):
     """calculate MSE."""
     t = real_label - prediction
-    return 1.0 * t.dot(t.T)
+    n = prediction.shape
+    return np.sqrt(1.0 * (t.dot(t.T))/n)
 
