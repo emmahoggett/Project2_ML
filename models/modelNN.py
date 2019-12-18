@@ -11,6 +11,17 @@ import pandas as pd
 import numpy as np
 
 
+############################################################################
+#
+#   In this file, the following method are implemented to increase readability
+#   of the code:
+#      - Deep Neural Network
+#      - Shallow Neural Network
+#   The two methods are implemented in the function computeNN
+#
+###########################################################################
+
+
 def computeNN(train, test):
     """ Implementation of a deep and a shallow neural network.
     
