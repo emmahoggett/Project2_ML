@@ -15,6 +15,7 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 from keras_radam import RAdam
+from keras.regularizers import l2
 
 def computeMF(train, test):
     """ Implementation of a matrix factorisation.
@@ -27,14 +28,14 @@ def computeMF(train, test):
     """
     
     print ("Starting to compute global mean...")
-    MF = computeMF(train, test)
+    MF = computeMF_RMSE(train, test)
     print ("... Finished sucessfully")
     
     return MF
 
 ###################################################
 
-def computeMF(train, test):
+def computeMF_RMSE(train, test):
     """
     Implementation of matrix factorisation using keras library.
     
@@ -45,6 +46,9 @@ def computeMF(train, test):
     
     """
     K = 25
+    
+    n_movies = 1000
+    n_users = 10000
 
     #creating movie embedding path
     movie_input = Input(shape=[1], name="Movie-Input")
