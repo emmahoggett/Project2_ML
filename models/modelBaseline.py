@@ -31,10 +31,6 @@ def computeBaseline(train, test):
     print ("Starting to compute item mean...")
     item_mean = computeItemMean(train, test)
     print ("... Finished sucessfully")
-    
-#     print ("Starting to compute MF using SGD...")
-#     MF_SGD = computeMFSGD(train, test)
-#     print ("... Finished sucessfully")
 
     print ("Starting to compute MF using ALS...")
     MF_ALS = computeMFALS(train, test)
@@ -42,7 +38,6 @@ def computeBaseline(train, test):
     
     mean_rating = global_mean.merge(user_mean, on=['user_id', 'movie_id'])
     mean_rating = mean_rating.merge(item_mean, on=['user_id', 'movie_id'])
-#                 .merge(MF_SGD, on=['user_id', 'movie_id'])\
     mean_rating = mean_rating.merge(MF_ALS, on=['user_id', 'movie_id'])
     
     return mean_rating
