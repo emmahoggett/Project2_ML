@@ -120,12 +120,16 @@ def computeNN(train, test):
 
     model_deep = deep_net()
     model_shallow = shallow_net()
-    
+    print ("Starting to compute shallow neural network...")
     model_shallow.fit([train.movie_id, train.user_id], y=categorical_train_y,  batch_size=20480, epochs=20)
-    model_deep.fit([train.movie_id, train.user_id], y=categorical_train_y,  batch_size=20480, epochs=20)
-    
     pred_shallow = model_shallow.predict([test.movie_id, test.user_id])
+    print ("... Finished sucessfully")
+    
+    print ("Starting to compute deep neural network...")
+    model_deep.fit([train.movie_id, train.user_id], y=categorical_train_y,  batch_size=20480, epochs=20)
     pred_deep = model_deep.predict([test.movie_id, test.user_id])
+    print ("... Finished sucessfully")
+    
     
     shallow_NN['NN_shallow_rating'] = np.dot(pred_shallow,[1,2, 3, 4, 5])
     deep_NN['NN_deep_rating'] = np.dot(pred_deep,[1,2, 3, 4, 5])
