@@ -125,60 +125,6 @@ def computeItemMean(train, test):
     return df
 
 
-###################################################
-
-
-def computeMFSGD(train, test):
-    """
-    Implementation of matrix factorization using SGD.
-    
-        train: trainset build to fit the model with the training set.
-        test: data frame of the test data.
-        
-        return : data frame that will be returned with the prediction in the column 'item_mean_rating'.
-    
-    """
-    # define parameters
-    num_features = 20
-    lambda_user = 0.07
-    lambda_item = 0.07
-    gamma = 0.02
-    num_epochs = 20     # number of full passes through the train set
-    np.random.seed(1)     # set seed
-
-    data = preprocess_data(train) # transform dataframe into sparse matrix
-    
-    # init matrix
-    user_features, item_features = init_MF(data, num_features)
-    
-    # find the non-zero ratings indices 
-    nz_row, nz_col = data.nonzero()
-    nz_train = list(zip(nz_row, nz_col)) # list of the indices of the non zero terms in train
-
-    for it in range(num_epochs):        
-        np.random.shuffle(nz_train)
-        
-        gamma /= 1.2  # decrease step size
-        
-        for d, n in nz_train:
-            item_info = item_features[:, d]
-            user_info = user_features[:, n]
-            err = train[d, n] - user_info.T.dot(item_info)
-    
-            item_features[:, d] += gamma * (err * user_info - lambda_item * item_info)
-            user_features[:, n] += gamma * (err * item_info - lambda_user * user_info)
-
-    prediction = user_features.T.dot(item_features)
-    
-    df = test[['user_id', 'movie_id']].copy()
-    n = len(df)
-    submission = np.zeros((n,1))
-    for i in range(n):
-        submission[i] = np.clip(prediction[test[i][1]-1][test[i][0]-1], 1, 5)
-    
-    df['MF_SGD_rating'] = submission
-    
-    return df
 
 
 
