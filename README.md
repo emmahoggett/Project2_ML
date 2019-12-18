@@ -30,6 +30,8 @@ The `data` folder is also needed to store training data and the data for the fin
 ### Additional content
 The folder `scripts` contains python code that established our machine learning procedure,  contains the testing of the different methods implemented. To run those files, the same files as before are needed. scripts: 
 
+The folder `litterature` contains scientific papers that inspired our project.
+
 ### Documentation
 * [Class Project 2](https://https://github.com/epfml/ML_course/tree/master/projects/project2/project_recommender_system) : Description of the project.
 * [Resources](https://www.https://www.aicrowd.com/challenges/epfl-ml-recommender-system-2019/dataset_files): Datas for the training and testing.
