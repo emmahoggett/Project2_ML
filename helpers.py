@@ -8,11 +8,6 @@ import scipy.sparse as sp
 import pandas as pd
 
 
-def read_txt(path):
-    """read text file from path."""
-    with open(path, "r") as f:
-        return f.read().splitlines()
-
 
 def load_data(path_dataset):
     """Load data in text format, one rating per line, as in the kaggle competition."""
@@ -27,10 +22,11 @@ def load_data(path_dataset):
 
 def create_csv(path_dataset, submission):
     """Write results in csv format"""
-    pos = ["r"+submission.user_id[i]+"_c"+submission.movie_id[i] for i in range(submission.index.stop)]
-    result = pd.DataFrame({'Id':pos, 'Prediction':submission.rating})
-    result = result.astype({'Id': str,'Prediction':int})
-    return result.to_csv(path_dataset, index=False)
+    final = submission[['user_id', 'movie_id', 'ridge_rating']]
+    final['Prediction'] = final['ridge_rating'].apply(lambda x: 5 if x > 5 else (1 if x < 1 else round(x)))
+    pos = ["r"+str(final.user_id[i])+"_c"+str(final.movie_id[i]) for i in range(final.shape[0])]
+    final['Id'] = pos
+    final[['Id', 'Prediction']].to_csv(path_dataset, index=False)
 
 def calculate_mse(real_label, prediction):
     """calculate MSE."""

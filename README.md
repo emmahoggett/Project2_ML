@@ -16,9 +16,10 @@ The following librairies are used:
 * [tensor flow](https://www.tensorflow.org/install/): `pip install tensorflow`
 
 
-To lunch the code `run.py` use the following codes:
+To lunch the code `run.py` use the following codes and pickle files:
 * `helpers.py`
-*
+* `data/`
+
 
 The `data` folder is also needed to store training data and the data for the final submission : `data_train.csv` and `sampleSubmission.csv`.
 
@@ -34,4 +35,4 @@ The folder `scripts` contains python code that established our machine learning 
 * Members: Aubet Louise, Cadillon Alexandre, Hoggett Emma
 
 ### Project Status
-The project was submitted on the 18 December 2019, as part of the [Machine Learning](https://www.epfl.ch/labs/mlo/machine-learning-cs-433/) course.
+The project was submitted on the 19 December 2019, as part of the [Machine Learning](https://www.epfl.ch/labs/mlo/machine-learning-cs-433/) course.
