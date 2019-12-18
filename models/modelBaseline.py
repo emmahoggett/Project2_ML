@@ -40,11 +40,10 @@ def computeBaseline(train, test):
     MF_ALS = computeMFALS(train, test)
     print ("... Finished sucessfully")    
     
-    mean_rating = global_mean\
-                .merge(user_mean, on=['user_id', 'movie_id'])\
-                .merge(item_mean, on=['user_id', 'movie_id'])\
+    mean_rating = global_mean.merge(user_mean, on=['user_id', 'movie_id'])
+    mean_rating = mean_rating.merge(item_mean, on=['user_id', 'movie_id'])
 #                 .merge(MF_SGD, on=['user_id', 'movie_id'])\
-                .merge(MF_ALS, on=['user_id', 'movie_id'])
+    mean_rating = mean_rating.merge(MF_ALS, on=['user_id', 'movie_id'])
     
     return mean_rating
 
@@ -199,12 +198,17 @@ def computeMFALS(train, test):
     
     """
     # parameters
+    num_features = 20
+    lambda_user = 0.081
+    lambda_item = 0.081
     stop_criterion = 1e-4
     change = 1
     error_list = [0, 0]
     np.random.seed(1)
     
     data = preprocess_data(train) # transform dataframe into sparse matrix
+    
+    test_array = test[['user_id', 'movie_id', 'rating']].values.astype(int)
 
     # initialisation
     user_features, item_features = init_MF(data, num_features)
@@ -218,6 +222,11 @@ def computeMFALS(train, test):
     while change > stop_criterion:
         user_features = update_user_feature(data, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices)
         item_features = update_item_feature(data, user_features, lambda_item, nnz_users_per_item, nz_item_userindices)
+        
+        error = compute_error(data, user_features, item_features, nz_train)
+        print("RMSE on training set: {}.".format(error))
+        error_list.append(error)
+        change = np.fabs(error_list[-1] - error_list[-2])
 
             
     prediction = user_features.T.dot(item_features)
@@ -226,7 +235,7 @@ def computeMFALS(train, test):
     n = len(df)
     submission = np.zeros((n,1))
     for i in range(n):
-        submission[i] = np.clip(prediction[test[i][1]-1][test[i][0]-1], 1, 5)
+        submission[i] = np.clip(prediction[test_array[i][1]-1][test_array[i][0]-1], 1, 5)
     
     df['MF_ALS_rating'] = submission
     

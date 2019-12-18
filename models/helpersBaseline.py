@@ -3,6 +3,8 @@ import scipy.sparse as sp
 import pandas as pd
 import csv
 
+from itertools import groupby
+
 #################################################
 ######### Functions for Baseline methods ########
 
@@ -17,7 +19,7 @@ def preprocess_data(data):
     # build rating matrix
     ratings = sp.lil_matrix((n_users, n_movies))
     
-    for i in range(len(datab)):
+    for i in range(len(data_array)):
         ratings[data_array[i][0] - 1, data_array[i][1] - 1] = data_array[i][2] 
         
     return ratings
@@ -42,6 +44,7 @@ def init_MF(train, num_features):
     for ind in range(num_item):
         item_features[0, ind] = item_sum[ind, 0] / item_nnz[ind]
     return user_features, item_features
+
 
 def update_user_feature(train, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices):
     """update user feature matrix."""
@@ -102,3 +105,14 @@ def group_by(data, index):
     sorted_data = sorted(data, key=lambda x: x[index])
     groupby_data = groupby(sorted_data, lambda x: x[index])
     return groupby_data
+
+
+def compute_error(data, user_features, item_features, nz):
+    """compute the loss (MSE) of the prediction of nonzero elements."""
+    mse = 0
+    for row, col in nz:
+        item_info = item_features[:, row]
+        user_info = user_features[:, col]
+        mse += (data[row, col] - user_info.T.dot(item_info)) ** 2
+    return np.sqrt(1.0 * mse / len(nz))
+
