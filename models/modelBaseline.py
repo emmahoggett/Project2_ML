@@ -6,6 +6,8 @@ import scipy.sparse as sp
 import pandas as pd
 from itertools import groupby
 
+from helpersBaseline import *
+
 def computeBaseline(train, test):
     """ Implementation of a baseline methods : global mean, user mean, item mean,
         and matrix factorisation using SGD as well as ALS.
@@ -74,13 +76,15 @@ def computeUserMean(train, test):
         
         return : data frame that will be returned with the prediction in the column 'user_mean_rating'.
     
-    """      
-    num_users, num_items = train.shape
+    """ 
+    data = preprocess_data(train) # transform dataframe into sparse matrix
+    
+    num_users, num_items = data.shape
     user_mean = np.zeros((num_users,1))
 
     for user_index in range(num_users):
         # find the non-zero ratings for each user in the training dataset
-        train_ratings = train[user_index, :]
+        train_ratings = data[user_index, :]
         nonzeros_train_ratings = train_ratings[train_ratings.nonzero()]
         
         # calculate the mean if the number of elements is not 0
@@ -105,12 +109,14 @@ def computeItemMean(train, test):
         return : data frame that will be returned with the prediction in the column 'item_mean_rating'.
     
     """
-    num_users, num_items = train.shape
+    data = preprocess_data(train) # transform dataframe into sparse matrix
+    
+    num_users, num_items = data.shape
     item_mean = np.zeros((num_items,1))
     
     for item_index in range(num_items):
         # find the non-zero ratings for each item in the training dataset
-        train_ratings = train[:, item_index]
+        train_ratings = data[:, item_index]
         nonzeros_train_ratings = train_ratings[train_ratings.nonzero()]
 
         # calculate the mean if the number of elements is not 0
@@ -146,11 +152,13 @@ def computeMFSGD(train, test):
     num_epochs = 20     # number of full passes through the train set
     np.random.seed(1)     # set seed
 
+    data = preprocess_data(train) # transform dataframe into sparse matrix
+    
     # init matrix
-    user_features, item_features = init_MF(train, num_features)
+    user_features, item_features = init_MF(data, num_features)
     
     # find the non-zero ratings indices 
-    nz_row, nz_col = train.nonzero()
+    nz_row, nz_col = data.nonzero()
     nz_train = list(zip(nz_row, nz_col)) # list of the indices of the non zero terms in train
 
     for it in range(num_epochs):        
@@ -195,19 +203,21 @@ def computeMFALS(train, test):
     change = 1
     error_list = [0, 0]
     np.random.seed(1)
+    
+    data = preprocess_data(train) # transform dataframe into sparse matrix
 
     # initialisation
-    user_features, item_features = init_MF(train, num_features)
+    user_features, item_features = init_MF(data, num_features)
     
     # get the number of non-zero ratings for each user and item
-    nnz_items_per_user, nnz_users_per_item = train.getnnz(axis=0), train.getnnz(axis=1)
+    nnz_items_per_user, nnz_users_per_item = data.getnnz(axis=0), data.getnnz(axis=1)
     
     # group the indices by row or column index
-    nz_train, nz_item_userindices, nz_user_itemindices = build_index_groups(train)
+    nz_train, nz_item_userindices, nz_user_itemindices = build_index_groups(data)
     
     while change > stop_criterion:
-        user_features = update_user_feature(train, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices)
-        item_features = update_item_feature(train, user_features, lambda_item, nnz_users_per_item, nz_item_userindices)
+        user_features = update_user_feature(data, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices)
+        item_features = update_item_feature(data, user_features, lambda_item, nnz_users_per_item, nz_item_userindices)
 
             
     prediction = user_features.T.dot(item_features)
@@ -222,82 +232,4 @@ def computeMFALS(train, test):
     
     return df
 
-###################################################
-### Functions needed for Matrix factorisation #####
 
-
-def init_MF(train, num_features):
-    """init the parameter for matrix factorization."""
-        
-    num_item, num_user = train.get_shape()
-
-    user_features = np.random.rand(num_features, num_user)
-    item_features = np.random.rand(num_features, num_item)
-
-    # start by item features.
-    item_nnz = train.getnnz(axis=1)
-    item_sum = train.sum(axis=1)
-
-    for ind in range(num_item):
-        item_features[0, ind] = item_sum[ind, 0] / item_nnz[ind]
-    return user_features, item_features
-
-def update_user_feature(train, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices):
-    """update user feature matrix."""
-    """the best lambda is assumed to be nnz_items_per_user[user] * lambda_user"""
-    num_user = nnz_items_per_user.shape[0]
-    num_feature = item_features.shape[0]
-    lambda_I = lambda_user * sp.eye(num_feature)
-    updated_user_features = np.zeros((num_feature, num_user))
-
-    for user, items in nz_user_itemindices:
-        # extract the columns corresponding to the prediction for given item
-        M = item_features[:, items]
-        
-        # update column row of user features
-        V = M @ train[items, user]
-        A = M @ M.T + nnz_items_per_user[user] * lambda_I
-        X = np.linalg.solve(A, V)
-        updated_user_features[:, user] = np.copy(X.T)
-        
-    return updated_user_features
-
-
-def update_item_feature(train, user_features, lambda_item, nnz_users_per_item, nz_item_userindices):
-    """update item feature matrix."""
-    """the best lambda is assumed to be nnz_items_per_item[item] * lambda_item"""
-    num_item = nnz_users_per_item.shape[0]
-    num_feature = user_features.shape[0]
-    lambda_I = lambda_item * sp.eye(num_feature)
-    updated_item_features = np.zeros((num_feature, num_item))
-
-    for item, users in nz_item_userindices:
-        # extract the columns corresponding to the prediction for given user
-        M = user_features[:, users]
-        V = M @ train[item, users].T
-        A = M @ M.T + nnz_users_per_item[item] * lambda_I
-        X = np.linalg.solve(A, V)
-        updated_item_features[:, item] = np.copy(X.T)
-        
-    return updated_item_features
-
-
-def build_index_groups(train):
-    """build groups for nnz rows and cols."""
-    nz_row, nz_col = train.nonzero()
-    nz_train = list(zip(nz_row, nz_col))
-
-    grouped_nz_train_byrow = group_by(nz_train, index=0)
-    nz_row_colindices = [(g, np.array([v[1] for v in value])) for g, value in grouped_nz_train_byrow]
-
-    grouped_nz_train_bycol = group_by(nz_train, index=1)
-    nz_col_rowindices = [(g, np.array([v[0] for v in value])) for g, value in grouped_nz_train_bycol]
-    
-    return nz_train, nz_row_colindices, nz_col_rowindices
-
-
-def group_by(data, index):
-    """group list of list by a specific index."""
-    sorted_data = sorted(data, key=lambda x: x[index])
-    groupby_data = groupby(sorted_data, lambda x: x[index])
-    return groupby_data
