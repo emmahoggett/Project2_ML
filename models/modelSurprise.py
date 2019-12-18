@@ -148,7 +148,7 @@ def computeKNNBasicMovie(data, test_np):
 def computeKNNMeansUser(data, test_np):
     """Compute the k-NN with mean user based method and return the predictions on the test
      The method is on all the data and got the following settings:
-         - Similarity function : MSD, user based
+         - Similarity function : Pearson baseline, user based
          - Number of closest neighbors : 500
          
          data : data frame which represent the train set
@@ -158,7 +158,7 @@ def computeKNNMeansUser(data, test_np):
     
     trainset, test = dataTrainSurprise(data, test_np)
     
-    sim_options = {'name':'msd','user_based': True}
+    sim_options = {'name':'pearson_baseline','user_based': True}
     knnmeans_algo = KNNWithMeans(k = 500, sim_options =sim_options).fit(trainset)
 
     test['knnmeans_user_rating'] = test[['user_id', 'movie_id']] \
@@ -169,7 +169,7 @@ def computeKNNMeansUser(data, test_np):
 def computeKNNMeansMovie(data, test_np):
     """Compute the k-NN with mean item based method and return the predictions on the test
      The method is on all the data and got the following settings:
-         - Similarity function : Pearson Baseline, item based
+         - Similarity function : Pearson baseline, item based
          - Number of closest neighbors : 108
          
          data : data frame which represent the train set
@@ -190,7 +190,7 @@ def computeKNNMeansMovie(data, test_np):
 def computeKNNZScoreUser(data, test_np):
     """Compute the k-NN with z score user based method and return the predictions on the test
      The method is on all the data and got the following settings:
-         - Similarity function : MSD, user based
+         - Similarity function : Pearson baseline, user based
          - Number of closest neighbors : 500
          
          data : data frame which represent the train set
@@ -200,7 +200,7 @@ def computeKNNZScoreUser(data, test_np):
     
     trainset, test = dataTrainSurprise(data, test_np)
     
-    sim_options = {'name':'msd','user_based': True}
+    sim_options = {'name':'pearson_baseline','user_based': True}
     knnz_algo = KNNWithZScore(k = 500, sim_options =sim_options).fit(trainset)
 
     test['knnzscore_user_rating'] = test[['user_id', 'movie_id']] \
