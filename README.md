@@ -29,16 +29,15 @@ The following librairies are used:
 * [tensor flow](https://www.tensorflow.org/install/): `pip install tensorflow`
 
 #### Code
-To lunch the code `run.py` use the following codes and pickle files:
+To launch the code `run.py` use the following codes and pickle files:
 * `helpers.py` : Deal with creation and loading of `.csv` files
 * `models/modelNN.py` : Contains methods for the neural network computations
 * `models/modelSurprise.py`: Contains surprise methods
 * `models/modelBaseline.py`: Contains baseline methods
 * `models/modelMatrixFact.py`: Contains matrix factorization methods
-* `data/test_pred.pickle`: Test file used for the Ridge cross validation model in `run.py`
 
 
-The `data` folder is also needed to store training data and the data for the final submission : `data_train.csv` and `sampleSubmission.csv`.
+The `data` folder is also needed to store training data, the data for the final submission and the test set trained on 0.8 of the training set, which will be used for the ridge regression : `data_train.csv`, `sampleSubmission.csv` and `test_pred.pickle`.
 
 ### Additional content
 The folder `models` contains python code that established our machine learning procedure,  contains the testing of the different methods implemented. Those files are run into the main code, which is `run.py`
