@@ -4,9 +4,13 @@
 This project's aim is to create predict good recommandation for films. Each user gives appreciations on films with grades that are integers between 0 and 5. One has to predict the remaining grades.
 
 The best achieved results is with a blending method and is the following submission:
+
 ID : 30458
+
 User name : PaillasonLover
+
 RMSE : 1.017
+
 Secondary : 0.172
 
 
