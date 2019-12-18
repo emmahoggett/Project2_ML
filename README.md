@@ -5,13 +5,10 @@ This project's aim is to create predict good recommandation for films. Each user
 
 The best achieved results is with a blending method and is the following submission:
 
-ID : 30458
-
-User name : PaillasonLover
-
-RMSE : 1.017
-
-Secondary : 0.172
+* ID : 30458
+* User name : PaillasonLover
+* RMSE : 1.017
+* Secondary : 0.172
 
 
 ### Getting Started
@@ -27,6 +24,8 @@ The following librairies are used:
 * [scikit-learn](https://scikit-learn.org/stable/): `pip install -U scikit-learn`
 * [keras](https://keras.io/): `pip install Keras`
 * [tensor flow](https://www.tensorflow.org/install/): `pip install tensorflow`
+* [keras_radam](https://pypi.org/project/keras-radam/): `pip install keras-rectified-adam`
+
 
 #### Code
 To launch the code `run.py` use the following codes and pickle files:
