@@ -9,7 +9,7 @@ from itertools import groupby
 ######### Functions for Baseline methods ########
 
 def preprocess_data(data):
-    """preprocessing the text data, conversion to sparse format."""
+    """Preprocessing the text data, conversion to sparse format."""
     
     data_array = data[['user_id', 'movie_id', 'rating']].values.astype(int)
     
@@ -30,7 +30,7 @@ def preprocess_data(data):
 
 
 def init_MF(train, num_features):
-    """init the parameter for matrix factorization."""
+    """Initialisation of parameters for matrix factorization."""
         
     num_item, num_user = train.get_shape()
 
@@ -47,8 +47,9 @@ def init_MF(train, num_features):
 
 
 def update_user_feature(train, item_features, lambda_user, nnz_items_per_user, nz_user_itemindices):
-    """update user feature matrix."""
-    """the best lambda is assumed to be nnz_items_per_user[user] * lambda_user"""
+    """Update user feature matrix. 
+    The best lambda is assumed to be nnz_items_per_user[user] * lambda_user"""
+    
     num_user = nnz_items_per_user.shape[0]
     num_feature = item_features.shape[0]
     lambda_I = lambda_user * sp.eye(num_feature)
@@ -68,8 +69,8 @@ def update_user_feature(train, item_features, lambda_user, nnz_items_per_user, n
 
 
 def update_item_feature(train, user_features, lambda_item, nnz_users_per_item, nz_item_userindices):
-    """update item feature matrix."""
-    """the best lambda is assumed to be nnz_items_per_item[item] * lambda_item"""
+    """Update item feature matrix."""
+    """The best lambda is assumed to be nnz_items_per_item[item] * lambda_item"""
     num_item = nnz_users_per_item.shape[0]
     num_feature = user_features.shape[0]
     lambda_I = lambda_item * sp.eye(num_feature)
@@ -87,7 +88,7 @@ def update_item_feature(train, user_features, lambda_item, nnz_users_per_item, n
 
 
 def build_index_groups(train):
-    """build groups for nnz rows and cols."""
+    """Build groups for nnz rows and cols."""
     nz_row, nz_col = train.nonzero()
     nz_train = list(zip(nz_row, nz_col))
 
@@ -101,14 +102,14 @@ def build_index_groups(train):
 
 
 def group_by(data, index):
-    """group list of list by a specific index."""
+    """Group list of list by a specific index."""
     sorted_data = sorted(data, key=lambda x: x[index])
     groupby_data = groupby(sorted_data, lambda x: x[index])
     return groupby_data
 
 
 def compute_error(data, user_features, item_features, nz):
-    """compute the loss (MSE) of the prediction of nonzero elements."""
+    """Compute the loss (MSE) of the prediction of nonzero elements."""
     mse = 0
     for row, col in nz:
         item_info = item_features[:, row]

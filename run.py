@@ -72,4 +72,4 @@ submission_pred['ridge_rating'] = gs_ridge.predict(submission_pred[models_names]
 submission_path = 'results.csv'
 create_csv(submission_path, submission_pred)
 
-print("The submission file was completed successfully")
+print("The submission file was completed successfully as 'result.csv'")
